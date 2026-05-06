@@ -17,7 +17,7 @@ public class Main : MonoBehaviour
 
     private bool showingStartMessage = true;
     private DateTime? StartT;
-    private string StartMsg = "WELCOME TO BOARD BIBLE MADE BY ASTRA\n Get Ready...Wait 2 Hours...";
+    private string StartMsg = "WELCOME TO BOARD BIBLE MADE BY ASTRA\n Get Ready...";
 
     private readonly string[] verses =
     {
@@ -55,7 +55,7 @@ public class Main : MonoBehaviour
         {
             CV = StartMsg;
 
-            if (DateTime.UtcNow - StartT >= TimeSpan.FromHours(2))
+            if (DateTime.UtcNow - StartT >= TimeSpan.FromMinutes(2))
             {
                 showingStartMessage = false;
                 PickVerse();
@@ -63,7 +63,7 @@ public class Main : MonoBehaviour
         }
         else
         {
-            if (CV == null || DateTime.UtcNow - ChangeTime > TimeSpan.FromHours(2))
+            if (CV == null || DateTime.UtcNow - ChangeTime > TimeSpan.FromMinutes(5))
             {
                 PickVerse();
             }
