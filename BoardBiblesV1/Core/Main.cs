@@ -154,28 +154,56 @@ public class Main : MonoBehaviour
         string url = "https://bible-api.com/" + UnityWebRequest.EscapeURL(refText);
         using (UnityWebRequest GIF = UnityWebRequest.Get(url))
         {
-            yield return GIF.SendWebRequest();
             GIF.timeout = 8;
-            if (GIF.result == UnityWebRequest.Result.Success)
+            yield return GIF.SendWebRequest();
+            if (GIF.result == UnityWebRequest.Result.ConnectionError ||
+                GIF.result == UnityWebRequest.Result.DataProcessingError)
             {
-                ApiBibleRes Data = JsonUtility.FromJson<ApiBibleRes>(GIF.downloadHandler.text);
-                if (!string.IsNullOrEmpty(Data.text))
-                {
-                    CV = Data.reference + " - " + Data.text;
-                    ChangeTime = DateTime.UtcNow;
-                    LV = false;
-                    yield break;
-                }
-                if (string.IsNullOrEmpty(GIF.downloadHandler.text))
-                {
-                    Debug.LogError("[BoardBible] API Failed HardCoded stuff used");
-                    UseLocal();
-                    yield break;
-                }
+                Debug.LogWarning("[Bible] Your Network is shit, using hardcoded stuff.");
+                UseLocal();
+                yield break;
             }
-        }
 
+            if (GIF.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.LogWarning("[Bible] HTTP error: " + GIF.responseCode);
+                UseLocal();
+                yield break;
+            }
+
+            if (string.IsNullOrEmpty(GIF.downloadHandler.text))
+            {
+                Debug.LogWarning("[Bible] Empty response");
+                UseLocal();
+                yield break;
+            }
+
+            ApiBibleRes Data;
+
+            try
+            {
+                Data = JsonUtility.FromJson<ApiBibleRes>(GIF.downloadHandler.text);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("[Bible] JSON error: " + e.Message);
+                UseLocal();
+                yield break;
+            }
+
+            if (Data == null || string.IsNullOrEmpty(Data.text))
+            {
+                UseLocal();
+                yield break;
+            }
+
+            CV = Data.reference + " - " + Data.text;
+            ChangeTime = DateTime.UtcNow;
+            LV = false;
+        }
     }
+
+    
 
     private void UseLocal()
     {
