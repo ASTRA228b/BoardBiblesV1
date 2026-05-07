@@ -1,5 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
 using TMPro;
+using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Astras_BB.Core;
 
@@ -17,7 +20,15 @@ public class Main : MonoBehaviour
 
     private bool showingStartMessage = true;
     private DateTime? StartT;
-    private string StartMsg = "WELCOME TO BOARD BIBLE MADE BY ASTRA\n Get Ready...";
+    private string StartMsg = "WELCOME TO BOARD BIBLE MADE BY ASTRA\n LOADING GET READY...";
+
+    private bool LV = false;
+    [Serializable]
+    public class ApiBibleRes
+    {
+        public string? reference;
+        public string? text;
+    }
 
     private readonly string[] verses =
     {
@@ -63,7 +74,7 @@ public class Main : MonoBehaviour
         }
         else
         {
-            if (CV == null || DateTime.UtcNow - ChangeTime > TimeSpan.FromMinutes(5))
+            if (!LV && (ChangeTime == null || DateTime.UtcNow - ChangeTime >= TimeSpan.FromMinutes(5)))
             {
                 PickVerse();
             }
@@ -74,6 +85,7 @@ public class Main : MonoBehaviour
     private void Start()
     {
         StartT = DateTime.UtcNow;
+        CV = StartMsg;
     }
 
 
@@ -121,9 +133,57 @@ public class Main : MonoBehaviour
 
     private void PickVerse()
     {
+        if (!LV)
+        {
+            StartCoroutine(APIPuller());
+        }
+    }
+
+    private IEnumerator APIPuller()
+    {
+        LV = true;
+
+        string[] books = {
+            "john", "psalms", "romans", "proverbs",
+            "matthew", "isaiah", "james", "hebrews"
+        };
+        string book = books[UnityEngine.Random.Range(0, books.Length)];
+        int chapter = UnityEngine.Random.Range(1, 20);
+        int verse = UnityEngine.Random.Range(1, 30);
+        string refText = $"{book} {chapter}:{verse}";
+        string url = "https://bible-api.com/" + UnityWebRequest.EscapeURL(refText);
+        using (UnityWebRequest GIF = UnityWebRequest.Get(url))
+        {
+            yield return GIF.SendWebRequest();
+            GIF.timeout = 8;
+            if (GIF.result == UnityWebRequest.Result.Success)
+            {
+                ApiBibleRes Data = JsonUtility.FromJson<ApiBibleRes>(GIF.downloadHandler.text);
+                if (!string.IsNullOrEmpty(Data.text))
+                {
+                    CV = Data.reference + " - " + Data.text;
+                    ChangeTime = DateTime.UtcNow;
+                    LV = false;
+                    yield break;
+                }
+                if (string.IsNullOrEmpty(GIF.downloadHandler.text))
+                {
+                    Debug.LogError("[BoardBible] API Failed HardCoded stuff used");
+                    UseLocal();
+                    yield break;
+                }
+            }
+        }
+
+    }
+
+    private void UseLocal()
+    {
         int index = UnityEngine.Random.Range(0, verses.Length);
         CV = verses[index];
+        CV += "\n\n(offline mode)";
         ChangeTime = DateTime.UtcNow;
+        LV = false;
     }
 
 }
