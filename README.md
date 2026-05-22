@@ -1,9 +1,11 @@
 ## Board Bibles
 
-# What it is 
+*Created By Astra*
 
-it just a mod that after 2 hours shows a random bible verse (you need to earn it)
+# Warning 
 
-# What it does 
+This mod pulls from an api and has an offline mode
 
-it shows them on both COC and MOTD hence the name
+# idk 
+
+just read the download
