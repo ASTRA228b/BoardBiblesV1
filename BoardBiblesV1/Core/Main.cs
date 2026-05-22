@@ -12,10 +12,13 @@ public class Main : MonoBehaviour
     private TMP_Text? MotdBodyText;
     private TMP_Text? COCText;
     private TMP_Text? COCBodyText;
+    private TMP_Text? COCRankedBText;
+    private TMP_Text? COCRankedHText;
 
     private DateTime? ChangeTime;
     private string CV = "";
     private string local = "Environment Objects/LocalObjects_Prefab/TreeRoom/";
+    private string RLocal = "RankedMain/Ranked_Layout/Ranked_TreeRoom_prefab";
     private string ModHTitle = "Board Bible V1";
 
     private bool showingStartMessage = true;
@@ -95,24 +98,28 @@ public class Main : MonoBehaviour
         GameObject MotdBTxt = GameObject.Find(local + "motdBodyText");
         GameObject COCHTxt = GameObject.Find(local + "CodeOfConductHeadingText");
         GameObject COCBTxt = GameObject.Find(local + "COCBodyText_TitleData");
+        GameObject COCRankedHTxt = GameObject.Find(RLocal + "CodeOfConductHeadingText");
+        GameObject COCRankedBTxt = GameObject.Find(RLocal + "COCBodyText_TitleDataRanked");
         MotdBTxt.GetComponent<PlayFabTitleDataTextDisplay>().enabled = false;
         COCBTxt.GetComponent<PlayFabTitleDataTextDisplay>().enabled = false;
+        COCRankedBTxt.GetComponent<PlayFabTitleDataTextDisplay>().enabled = false;
         if (MotdHTxt != null)
-        {
             MotdText = MotdHTxt.GetComponent<TMP_Text>();
-        }
+        
         if (MotdBTxt != null)
-        {
             MotdBodyText = MotdBTxt.GetComponent<TMP_Text>();
-        }
+        
         if (COCHTxt != null)
-        {
             COCText = COCHTxt.GetComponent<TMP_Text>();
-        }
+        
         if (COCBTxt != null)
-        {
             COCBodyText = COCBTxt.GetComponent<TMP_Text>();
-        }
+
+        if (COCRankedBTxt != null)
+            COCRankedBText = COCRankedBTxt.GetComponent<TMP_Text>();
+
+        if (COCRankedHTxt != null)
+            COCRankedHText = COCRankedHTxt.GetComponent<TMP_Text>();
     }
 
     private void ApplyTexts()
@@ -123,12 +130,17 @@ public class Main : MonoBehaviour
         if (COCText != null)
             COCText.text = ModHTitle;
 
+        if (COCRankedHText != null)
+            COCRankedHText.text = ModHTitle;
+
         if (MotdBodyText != null)
             MotdBodyText.text = CV.ToUpper();
 
         if (COCBodyText != null)
             COCBodyText.text = CV.ToUpper();
 
+        if (COCRankedBText != null)
+            COCRankedBText.text = CV.ToUpper();
     }
 
     private void PickVerse()
