@@ -156,8 +156,16 @@ public class Main : MonoBehaviour
         LV = true;
 
         string[] books = {
-            "john", "psalms", "romans", "proverbs",
-            "matthew", "isaiah", "james", "hebrews"
+           "genesis", "exodus", "leviticus", "numbers", "deuteronomy", "joshua", "judges",
+           "ruth", "1 samuel", "2 samuel", "1 kings", "2 kings", "1 chronicles", "2 chronicles",
+           "ezra", "nehemiah", "esther", "job", "psalms", "proverbs", "ecclesiastes",
+           "song of solomon", "isaiah", "jeremiah", "lamentations", "ezekiel", "daniel", "hosea",
+           "joel", "amos", "obadiah", "jonah", "micah", "nahum", "habakkuk",
+           "zephaniah", "haggai", "zechariah", "malachi", "matthew", "mark",
+           "luke", "john", "acts", "romans", "1 corinthians", "2 corinthians", "galatians", "ephesians",
+           "philippians", "colossians", "1 thessalonians", "2 thessalonians", "1 timothy",
+           "2 timothy", "titus", "philemon", "hebrews", "james", "1 peter", "2 peter",
+           "1 john", "2 john", "3 john", "jude", "revelation"
         };
         string book = books[UnityEngine.Random.Range(0, books.Length)];
         int chapter = UnityEngine.Random.Range(1, 20);
@@ -168,8 +176,7 @@ public class Main : MonoBehaviour
         {
             GIF.timeout = 8;
             yield return GIF.SendWebRequest();
-            if (GIF.result == UnityWebRequest.Result.ConnectionError ||
-                GIF.result == UnityWebRequest.Result.DataProcessingError)
+            if (GIF.result == UnityWebRequest.Result.ConnectionError || GIF.result == UnityWebRequest.Result.DataProcessingError)
             {
                 Debug.LogWarning("[Bible] Your Network is shit, using hardcoded stuff.");
                 UseLocal();
